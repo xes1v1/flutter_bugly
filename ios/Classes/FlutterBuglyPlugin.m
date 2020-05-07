@@ -53,6 +53,13 @@
       }
 
       [Bugly reportExceptionWithCategory:5 name:crash_message reason:@" " callStack:stackTraceArray extraInfo:data terminateApp:NO];
+      //构建华佗平台上报数据
+      NSDictionary *dict = @{
+           @"crashMessage" : crash_message,
+           @"crashType" : @"js",
+           @"jsCrashStacktrace" : crash_detail,
+       };
+       NSLog(@"构建的待上传flutter异常数据: %@", dict);
       result(nil);
   }else if([@"setUserId" isEqualToString:call.method]){
       NSString *userId = call.arguments[@"userId"];
