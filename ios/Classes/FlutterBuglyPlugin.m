@@ -1,5 +1,6 @@
 #import "FlutterBuglyPlugin.h"
 #import <Bugly/Bugly.h>
+#import <DReporter/DReporter.h>
 
 @implementation FlutterBuglyPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -60,6 +61,7 @@
            @"jsCrashStacktrace" : crash_detail,
        };
        NSLog(@"构建的待上传flutter异常数据: %@", dict);
+      [DVTReporter reportCrash:dict];
       result(nil);
   }else if([@"setUserId" isEqualToString:call.method]){
       NSString *userId = call.arguments[@"userId"];
