@@ -8,6 +8,7 @@ import com.crazecoder.flutterbugly.callback.UpgradeCallback;
 import com.crazecoder.flutterbugly.utils.JsonUtil;
 import com.crazecoder.flutterbugly.utils.MapUtil;
 import com.tencent.bugly.Bugly;
+import com.tencent.bugly.BuglyStrategy;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.UpgradeInfo;
 import com.tencent.bugly.beta.upgrade.UpgradeListener;
@@ -30,7 +31,7 @@ public class FlutterBuglyPlugin implements MethodCallHandler {
     private boolean isResultSubmitted = false;
     private UpgradeInfo upgradeInfo;
     private static UpgradeCallback callback;
-
+    public static BuglyStrategy strategy;
 
     public FlutterBuglyPlugin(Activity activity) {
         this.activity = activity;
@@ -91,7 +92,7 @@ public class FlutterBuglyPlugin implements MethodCallHandler {
                     }
                 };
                 String appId = call.argument("appId").toString();
-                Bugly.init(activity.getApplicationContext(), appId, BuildConfig.DEBUG);
+                Bugly.init(activity.getApplicationContext(), appId, BuildConfig.DEBUG,strategy);
                 if (call.hasArgument("channel")) {
                     String channel = call.argument("channel");
                     if (!TextUtils.isEmpty(channel))
