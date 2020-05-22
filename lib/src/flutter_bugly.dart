@@ -144,6 +144,7 @@ class FlutterBugly {
     runZoned<Future<Null>>(() async {
       callback();
     }, onError: (error, stackTrace) {
+      print("catched flutter error-----");
       _filterAndUploadException(
         debugUpload,
         _isDebug,
