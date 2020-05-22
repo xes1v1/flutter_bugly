@@ -204,6 +204,7 @@ class FlutterBugly {
   ///iOS 错误分析=>跟踪数据=>crash_attach.log
   static Future<Null> uploadException(
       {@required String message, @required String detail, Map data}) async {
+    print("uploadException");
     var map = {};
     map.putIfAbsent("crash_message", () => message);
     map.putIfAbsent("crash_detail", () => detail);
