@@ -16,15 +16,15 @@
       NSString *appId = call.arguments[@"appId"];
       BOOL b = [self isBlankString:appId];
       if(!b){
-          BuglyConfig * config = [[BuglyConfig alloc] init];
-          NSString *channel = call.arguments[@"channel"];
-          BOOL isChannelEmpty = [self isBlankString:channel];
-          if(!isChannelEmpty){
-            config.channel = channel;
-          }
-          [Bugly startWithAppId:appId config:config];
-          NSLog(@"Bugly appId: %@", appId);
-          [DReportConfig configWithAppID:@"1002667" appKey:@"dad4455adf78b7c92ca1f6cd2d0c9001"];
+//          BuglyConfig * config = [[BuglyConfig alloc] init];
+//          NSString *channel = call.arguments[@"channel"];
+//          BOOL isChannelEmpty = [self isBlankString:channel];
+//          if(!isChannelEmpty){
+//            config.channel = channel;
+//          }
+//          [Bugly startWithAppId:appId config:config];
+//          NSLog(@"Bugly appId: %@", appId);
+//          [DReportConfig configWithAppID:@"1002667" appKey:@"dad4455adf78b7c92ca1f6cd2d0c9001"];
 
           NSDictionary * dict = @{@"message":@"Bugly 初始化成功",@"appId":appId, @"isSuccess":@YES};
           NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
