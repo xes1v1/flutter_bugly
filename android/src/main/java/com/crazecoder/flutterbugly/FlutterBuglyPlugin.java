@@ -1,6 +1,5 @@
 package com.crazecoder.flutterbugly;
 
-import android.app.Activity;
 import android.text.TextUtils;
 
 import com.crazecoder.flutterbugly.bean.BuglyInitResultInfo;
@@ -10,7 +9,6 @@ import com.crazecoder.flutterbugly.utils.MapUtil;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.UpgradeInfo;
-import com.tencent.bugly.beta.upgrade.UpgradeListener;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.Map;
@@ -25,23 +23,18 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  * FlutterBuglyPlugin
  */
 public class FlutterBuglyPlugin implements MethodCallHandler {
-    private Activity activity;
+    public static BuglyConfig config;
     private Result result;
     private boolean isResultSubmitted = false;
     private UpgradeInfo upgradeInfo;
     private static UpgradeCallback callback;
-
-
-    public FlutterBuglyPlugin(Activity activity) {
-        this.activity = activity;
-    }
 
     /**
      * Plugin registration.
      */
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "crazecoder/flutter_bugly");
-        FlutterBuglyPlugin plugin = new FlutterBuglyPlugin(registrar.activity());
+        FlutterBuglyPlugin plugin = new FlutterBuglyPlugin();
         channel.setMethodCallHandler(plugin);
     }
 
@@ -80,22 +73,22 @@ public class FlutterBuglyPlugin implements MethodCallHandler {
                 if (call.hasArgument("canShowApkInfo")) {
                     Beta.canShowApkInfo = call.argument("canShowApkInfo");
                 }
-                Beta.canShowUpgradeActs.add(activity.getClass());
-                /*在application中初始化时设置监听，监听策略的收取*/
-                Beta.upgradeListener = new UpgradeListener() {
-                    @Override
-                    public void onUpgrade(int ret, UpgradeInfo strategy, boolean isManual, boolean isSilence) {
-                        if (callback != null) {
-                            callback.onUpgrade(strategy);
-                        }
-                    }
-                };
+//                Beta.canShowUpgradeActs.add(activity.getClass());
+//                /*在application中初始化时设置监听，监听策略的收取*/
+//                Beta.upgradeListener = new UpgradeListener() {
+//                    @Override
+//                    public void onUpgrade(int ret, UpgradeInfo strategy, boolean isManual, boolean isSilence) {
+//                        if (callback != null) {
+//                            callback.onUpgrade(strategy);
+//                        }
+//                    }
+//                };
                 String appId = call.argument("appId").toString();
-                Bugly.init(activity.getApplicationContext(), appId, BuildConfig.DEBUG);
+                Bugly.init(config.context, appId, BuildConfig.DEBUG, config.strategy);
                 if (call.hasArgument("channel")) {
                     String channel = call.argument("channel");
                     if (!TextUtils.isEmpty(channel))
-                        Bugly.setAppChannel(activity.getApplicationContext(), channel);
+                        Bugly.setAppChannel(config.context, channel);
                 }
                 result(getResultBean(true, appId, "Bugly 初始化成功"));
             } else {
@@ -104,27 +97,27 @@ public class FlutterBuglyPlugin implements MethodCallHandler {
         } else if (call.method.equals("setAppChannel")) {
             if (call.hasArgument("channel")) {
                 String channel = call.argument("channel");
-                Bugly.setAppChannel(activity.getApplicationContext(), channel);
+                Bugly.setAppChannel(config.context, channel);
             }
             result(null);
         } else if (call.method.equals("setUserId")) {
             if (call.hasArgument("userId")) {
                 String userId = call.argument("userId");
-                Bugly.setUserId(activity.getApplicationContext(), userId);
+                Bugly.setUserId(config.context, userId);
             }
             result(null);
         } else if (call.method.equals("setUserTag")) {
             if (call.hasArgument("userTag")) {
                 Integer userTag = call.argument("userTag");
                 if (userTag != null)
-                    Bugly.setUserTag(activity.getApplicationContext(), userTag);
+                    Bugly.setUserTag(config.context, userTag);
             }
             result(null);
         } else if (call.method.equals("putUserData")) {
             if (call.hasArgument("key") && call.hasArgument("value")) {
                 String userDataKey = call.argument("key");
                 String userDataValue = call.argument("value");
-                Bugly.putUserData(activity.getApplicationContext(), userDataKey, userDataValue);
+                Bugly.putUserData(config.context, userDataKey, userDataValue);
             }
             result(null);
         } else if (call.method.equals("checkUpgrade")) {
