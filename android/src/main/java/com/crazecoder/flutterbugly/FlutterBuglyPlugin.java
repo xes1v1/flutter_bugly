@@ -2,6 +2,8 @@ package com.crazecoder.flutterbugly;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.crazecoder.flutterbugly.bean.BuglyInitResultInfo;
 import com.crazecoder.flutterbugly.callback.UpgradeCallback;
 import com.crazecoder.flutterbugly.utils.JsonUtil;
@@ -13,6 +15,8 @@ import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.Map;
 
+import io.flutter.BuildConfig;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -22,7 +26,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 /**
  * FlutterBuglyPlugin
  */
-public class FlutterBuglyPlugin implements MethodCallHandler {
+public class FlutterBuglyPlugin implements FlutterPlugin, MethodCallHandler {
     public static BuglyConfig config;
     private Result result;
     private boolean isResultSubmitted = false;
@@ -36,6 +40,17 @@ public class FlutterBuglyPlugin implements MethodCallHandler {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "crazecoder/flutter_bugly");
         FlutterBuglyPlugin plugin = new FlutterBuglyPlugin();
         channel.setMethodCallHandler(plugin);
+    }
+
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+        final MethodChannel channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "crazecoder/flutter_bugly");
+        channel.setMethodCallHandler(this);
+    }
+
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+
     }
 
     @Override
@@ -176,46 +191,6 @@ public class FlutterBuglyPlugin implements MethodCallHandler {
             map = call.argument("crash_data");
         }
         CrashReport.postException(8, "Flutter Exception", message, detail, map);
-
-//        String[] details = detail.split("#");
-//        List<StackTraceElement> elements = new ArrayList<>();
-//        for (String s : details) {
-//            if (!TextUtils.isEmpty(s)) {
-//                String methodName = null;
-//                String fileName = null;
-//                int lineNum = -1;
-//                String[] contents = s.split(" \\(");
-//                if (contents.length > 0) {
-//                    methodName = contents[0];
-//                    if (contents.length < 2) {
-//                        break;
-//                    }
-//                    String packageContent = contents[1].replace(")", "");
-//                    String[] packageContentArray = packageContent.split("\\.dart:");
-//                    if (packageContentArray.length > 0) {
-//                        if (packageContentArray.length == 1) {
-//                            fileName = packageContentArray[0];
-//                        } else {
-//                            fileName = packageContentArray[0] + ".dart";
-//                            Pattern patternTrace = Pattern.compile("[1-9]\\d*");
-//                            Matcher m = patternTrace.matcher(packageContentArray[1]);
-//                            if (m.find()) {
-//                                String lineNumStr = m.group();
-//                                lineNum = Integer.parseInt(lineNumStr);
-//                            }
-//                        }
-//                    }
-//                }
-//                StackTraceElement element = new StackTraceElement("Dart", methodName, fileName, lineNum);
-//                elements.add(element);
-//            }
-//        }
-//        Throwable throwable = new Throwable(message);
-//        if (elements.size() > 0) {
-//            StackTraceElement[] elementsArray = new StackTraceElement[elements.size()];
-//            throwable.setStackTrace(elements.toArray(elementsArray));
-//        }
-//        CrashReport.postCatchedException(throwable);
     }
 
     private void result(Object object) {
@@ -236,4 +211,6 @@ public class FlutterBuglyPlugin implements MethodCallHandler {
         bean.setMessage(msg);
         return bean;
     }
+
+
 }
