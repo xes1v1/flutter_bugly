@@ -141,9 +141,9 @@ class FlutterBugly {
     //
     // - https://api.dartlang.org/stable/1.24.2/dart-async/Zone-class.html
     // - https://www.dartlang.org/articles/libraries/zones
-    runZoned<Future<Null>>(() async {
+    runZonedGuarded<Future<Null>>(() async {
       callback();
-    }, onError: (error, stackTrace) {
+    }, (error, stackTrace) {
       print("catched flutter error-----");
       _filterAndUploadException(
         debugUpload,

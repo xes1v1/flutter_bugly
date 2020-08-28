@@ -1,3 +1,5 @@
+## 1.0.2
+* runZonedGuarded
 ## 1.0.1
 * android兼容插件v2.1
 ## 1.0.0
